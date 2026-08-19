@@ -1,0 +1,53 @@
+2026-08-15 23:22:19.321 [background-preinit] INFO  [o.h.validator.internal.util.Version] - HV000001: Hibernate Validator 8.0.3.Final
+2026-08-15 23:22:19.331 [Test worker] INFO  [web.com.auth.AuthenticationTests] - Starting AuthenticationTests using Java 21.0.12 with PID 5043 (started by aidenphung in /Users/aidenphung/Documents/ShopDA/BE/be_service_auth)
+2026-08-15 23:22:19.331 [Test worker] INFO  [web.com.auth.AuthenticationTests] - The following 1 profile is active: "dev"
+2026-08-15 23:22:19.603 [Test worker] INFO  [o.s.d.r.c.RepositoryConfigurationDelegate] - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-08-15 23:22:19.603 [Test worker] INFO  [o.s.d.r.c.RepositoryConfigurationDelegate] - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-15 23:22:19.648 [Test worker] INFO  [o.s.d.r.c.RepositoryConfigurationDelegate] - Finished Spring Data repository scanning in 42 ms. Found 3 JPA repository interfaces.
+2026-08-15 23:22:19.655 [Test worker] INFO  [o.s.d.r.c.RepositoryConfigurationDelegate] - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-08-15 23:22:19.655 [Test worker] INFO  [o.s.d.r.c.RepositoryConfigurationDelegate] - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-08-15 23:22:19.660 [Test worker] INFO  [o.s.d.r.c.RepositoryConfigurationExtensionSupport] - Spring Data Redis - Could not safely identify store assignment for repository candidate interface web.com.auth.repository.RefreshTokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-15 23:22:19.660 [Test worker] INFO  [o.s.d.r.c.RepositoryConfigurationExtensionSupport] - Spring Data Redis - Could not safely identify store assignment for repository candidate interface web.com.auth.repository.RoleRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-15 23:22:19.660 [Test worker] INFO  [o.s.d.r.c.RepositoryConfigurationExtensionSupport] - Spring Data Redis - Could not safely identify store assignment for repository candidate interface web.com.auth.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-08-15 23:22:19.660 [Test worker] INFO  [o.s.d.r.c.RepositoryConfigurationDelegate] - Finished Spring Data repository scanning in 2 ms. Found 0 Redis repository interfaces.
+2026-08-15 23:22:19.743 [Test worker] INFO  [o.s.cloud.context.scope.GenericScope] - BeanFactory id=74b43208-c981-3be0-aaa4-299416f04643
+2026-08-15 23:22:19.834 [Test worker] INFO  [o.h.jpa.internal.util.LogHelper] - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-08-15 23:22:19.847 [Test worker] INFO  [org.hibernate.Version] - HHH000412: Hibernate ORM core version 6.6.53.Final
+2026-08-15 23:22:19.855 [Test worker] INFO  [o.h.c.i.RegionFactoryInitiator] - HHH000026: Second-level cache disabled
+2026-08-15 23:22:19.924 [Test worker] INFO  [o.s.o.j.p.SpringPersistenceUnitInfo] - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-15 23:22:20.028 [Test worker] WARN  [org.hibernate.orm.deprecation] - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-08-15 23:22:20.304 [Test worker] INFO  [o.h.e.t.j.p.i.JtaPlatformInitiator] - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-08-15 23:22:20.330 [Test worker] INFO  [o.s.o.j.LocalContainerEntityManagerFactoryBean] - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-15 23:22:20.564 [Test worker] WARN  [o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration] - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-08-15 23:22:20.864 [Test worker] INFO  [o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration] - Eureka HTTP Client uses RestTemplate.
+2026-08-15 23:22:20.879 [Test worker] WARN  [o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger] - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-08-15 23:22:20.891 [Test worker] INFO  [o.s.c.n.eureka.InstanceInfoFactory] - Setting initial instance status as: STARTING
+2026-08-15 23:22:20.899 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - Initializing Eureka in region us-east-1
+2026-08-15 23:22:20.900 [Test worker] INFO  [c.n.d.s.r.aws.ConfigClusterResolver] - Resolving eureka endpoints via configuration
+2026-08-15 23:22:20.907 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - Disable delta property : false
+2026-08-15 23:22:20.907 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - Single vip registry refresh property : null
+2026-08-15 23:22:20.907 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - Force full registry fetch : false
+2026-08-15 23:22:20.907 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - Application is null : false
+2026-08-15 23:22:20.907 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - Registered Applications size is zero : true
+2026-08-15 23:22:20.907 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - Application version is -1: true
+2026-08-15 23:22:20.907 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - Getting all instance registry info from the eureka server
+2026-08-15 23:22:21.043 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - The response status is 200
+2026-08-15 23:22:21.044 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - Starting heartbeat executor: renew interval is: 30
+2026-08-15 23:22:21.045 [Test worker] INFO  [c.n.discovery.InstanceInfoReplicator] - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-08-15 23:22:21.045 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - Discovery Client initialized at timestamp 1786810941045 with initial instances count: 3
+2026-08-15 23:22:21.047 [Test worker] INFO  [o.s.c.n.e.s.EurekaServiceRegistry] - Registering application AUTH-SERVICE with eureka with status UP
+2026-08-15 23:22:21.047 [Test worker] INFO  [c.netflix.discovery.DiscoveryClient] - Saw local status change event StatusChangeEvent [timestamp=1786810941047, current=UP, previous=STARTING]
+2026-08-15 23:22:21.047 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  [c.netflix.discovery.DiscoveryClient] - DiscoveryClient_AUTH-SERVICE/aidenphungsmini.lan:AUTH-SERVICE:8089: registering service...
+2026-08-15 23:22:21.056 [Test worker] INFO  [web.com.auth.AuthenticationTests] - Started AuthenticationTests in 1.88 seconds (process running for 2.451)
+2026-08-15 23:22:21.057 [Test worker] WARN  [o.s.c.events.SpringDocAppInitializer] - SpringDoc /api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-08-15 23:22:21.057 [Test worker] WARN  [o.s.c.events.SpringDocAppInitializer] - SpringDoc /swagger-ui endpoint is enabled by default. To disable it in production, set the property 'springdoc.swagger-ui.enabled=false'
+2026-08-15 23:22:21.062 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  [c.netflix.discovery.DiscoveryClient] - DiscoveryClient_AUTH-SERVICE/aidenphungsmini.lan:AUTH-SERVICE:8089 - registration status: 204
+2026-08-15 23:22:21.312 [SpringApplicationShutdownHook] INFO  [o.s.c.n.e.s.EurekaServiceRegistry] - Unregistering application AUTH-SERVICE with eureka with status DOWN
+2026-08-15 23:22:21.312 [SpringApplicationShutdownHook] INFO  [c.netflix.discovery.DiscoveryClient] - Saw local status change event StatusChangeEvent [timestamp=1786810941312, current=DOWN, previous=UP]
+2026-08-15 23:22:21.312 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  [c.netflix.discovery.DiscoveryClient] - DiscoveryClient_AUTH-SERVICE/aidenphungsmini.lan:AUTH-SERVICE:8089: registering service...
+2026-08-15 23:22:21.315 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  [c.netflix.discovery.DiscoveryClient] - DiscoveryClient_AUTH-SERVICE/aidenphungsmini.lan:AUTH-SERVICE:8089 - registration status: 204
+2026-08-15 23:22:21.321 [SpringApplicationShutdownHook] INFO  [o.s.o.j.LocalContainerEntityManagerFactoryBean] - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-08-15 23:22:21.324 [SpringApplicationShutdownHook] INFO  [c.netflix.discovery.DiscoveryClient] - Shutting down DiscoveryClient ...
+2026-08-15 23:22:24.329 [SpringApplicationShutdownHook] INFO  [c.netflix.discovery.DiscoveryClient] - Unregistering ...
+2026-08-15 23:22:24.342 [SpringApplicationShutdownHook] INFO  [c.netflix.discovery.DiscoveryClient] - DiscoveryClient_AUTH-SERVICE/aidenphungsmini.lan:AUTH-SERVICE:8089 - deregister  status: 200
+2026-08-15 23:22:24.343 [SpringApplicationShutdownHook] INFO  [c.netflix.discovery.DiscoveryClient] - Completed shut down of DiscoveryClient

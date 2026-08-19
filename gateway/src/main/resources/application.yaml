@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: GATEWAY-SERVICE
+  cloud:
+    discovery:
+      client:
+        simple:
+          instances:
+            AUTH-SERVICE:
+              - uri: ${AUTH_SCHEME:http}://${AUTH_HOST:localhost}:${AUTH_PORT:8089}
+            PRODUCT-SERVICE:
+              - uri: ${PRODUCT_SCHEME:http}://${PRODUCT_HOST:localhost}:${PRODUCT_PORT:8088}
+            ORDER-SERVICE:
+              - uri: ${ORDER_SCHEME:http}://${ORDER_HOST:localhost}:${ORDER_PORT:8087}
+
+server:
+  port: 8080
+
+# ─── Logging ────────────────────────────────────────────────────────
+logging:
+  level:
+    be_service.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.loadbalancer: DEBUG
+    org.springframework.cloud.client.discovery: DEBUG
+
+## ─── Actuator ───────────────────────────────────────────────────────
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health, info
+#  endpoint:
+#    health:
+#      show-details: always

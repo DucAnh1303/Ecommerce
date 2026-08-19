@@ -1,0 +1,48 @@
+server:
+  port: 8089
+spring:
+  profiles:
+    active: dev
+  application:
+    name: AUTH-SERVICE
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_db
+    username: auth
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+
+logging:
+  file:
+    path: ./var/log/auth-service
+
+jwt:
+  secretKey: 'asdasdasd213!!!@@AAA1324341eeeee331'
+  accessExp: 3600000
+  refreshExp: 10800000
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+
+

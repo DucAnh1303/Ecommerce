@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.46/a5cfe99fdf320e84955ef653f2ce1bf789d11385/lombok-1.18.46.jar" />
+        </processorPath>
+        <module name="gateway.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="be_service_order" target="21" />
+      <module name="be_service_order.main" target="21" />
+      <module name="be_service_order.test" target="21" />
+      <module name="demo" target="21" />
+      <module name="demo.main" target="21" />
+      <module name="demo.test" target="21" />
+      <module name="product" target="21" />
+      <module name="product.main" target="21" />
+      <module name="product.test" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="be_service_order" options="-parameters" />
+      <module name="be_service_order.main" options="-parameters" />
+      <module name="be_service_order.test" options="-parameters" />
+      <module name="demo" options="-parameters" />
+      <module name="demo.main" options="-parameters" />
+      <module name="demo.test" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
+      <module name="eureka-server.main" options="-parameters" />
+      <module name="eureka-server.test" options="-parameters" />
+      <module name="gateway" options="-parameters" />
+      <module name="gateway.main" options="-parameters" />
+      <module name="gateway.test" options="-parameters" />
+      <module name="product" options="-parameters" />
+      <module name="product.main" options="-parameters" />
+      <module name="product.test" options="-parameters" />
+      <module name="service-auth" options="-parameters" />
+      <module name="service-auth.main" options="-parameters" />
+      <module name="service-auth.test" options="-parameters" />
+      <module name="service-product" options="-parameters" />
+      <module name="service-product.main" options="-parameters" />
+      <module name="service-product.test" options="-parameters" />
+      <module name="service_order" options="-parameters" />
+      <module name="service_order.main" options="-parameters" />
+      <module name="service_order.test" options="-parameters" />
+    </option>
+  </component>
+</project>

@@ -1,0 +1,88 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: ORDER-SERVICE
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3307/order_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:order_user}
+    password: ${DB_PASSWORD:order_pass}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  # ─── Kafka ──────────────────────────────────────────────────────────────────
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9094}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: order-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: "java.util.Map"
+
+server:
+  port: 8087
+
+## ─── Eureka ─────────────────────────────────────────────────────────────────
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+#  instance:
+#    prefer-ip-address: true
+
+# ─── Swagger ─────────────────────────────────────────────────────────────────
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+
+# ─── Resilience4j Rate Limiter ────────────────────────────────────────────────
+resilience4j:
+  ratelimiter:
+    instances:
+      orderCreate:
+        limit-for-period: 100
+        limit-refresh-period: 1s
+        timeout-duration: 0
+        register-health-indicator: true
+
+# ─── Actuator ────────────────────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+  endpoint:
+    health:
+      show-details: always
+
+# ─── Logging ─────────────────────────────────────────────────────────────────
+logging:
+  file:
+    path: ./var/log/order-service
+  level:
+    root: INFO
+    com.service.order: DEBUG
+    org.springframework.web: INFO
+
+
+app:
+  auth-service:
+    url: ${AUTH_SERVICE_URL:http://localhost:8089}
