@@ -33,7 +33,7 @@ springdoc:
 
 logging:
   file:
-    path: ./var/log/auth-service
+    path: /Users/aidenphung/Documents/ShopDA/Log_BE/Auth_Logs
 
 jwt:
   secretKey: 'asdasdasd213!!!@@AAA1324341eeeee331'

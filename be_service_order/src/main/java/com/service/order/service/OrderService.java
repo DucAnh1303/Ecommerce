@@ -335,13 +335,17 @@ public class OrderService {
             return OrderResponse.from(order);
         }
 
+        OrderStatus previousStatus = order.getStatus();
+
         order.setStatus(OrderStatus.CANCELLED);
         order.setFailReason("Khách hàng chủ động hủy đơn");
         OrderEntity saved = orderRepository.save(order);
 
         // Kích hoạt Saga rollback hoàn trả tồn kho nếu đơn đã từng giữ kho hoặc đang chờ thanh toán
-        publishRollbackEvent(saved, "Khách hàng hủy đơn hàng");
-        log.warn("[Saga][Cancel] Đã hủy orderId={} và kích hoạt Saga rollback tồn kho", orderId);
+        if (previousStatus != OrderStatus.STOCK_FAILED) {
+            publishRollbackEvent(saved, "Khách hàng hủy đơn hàng");
+            log.warn("[Saga][Cancel] Đã hủy orderId={} và kích hoạt Saga rollback tồn kho (trạng thái trước: {})", orderId, previousStatus);
+        }
 
         return OrderResponse.from(saved);
     }

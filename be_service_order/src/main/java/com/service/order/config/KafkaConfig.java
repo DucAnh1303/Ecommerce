@@ -122,7 +122,7 @@ public class KafkaConfig {
         // 3 thread/instance = xử lý song song 3 partition
         factory.setConcurrency(3);
         // Manual ack
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
 
         // ─── Error Handler + DLQ ─────────────────────────────────────────────
         DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,

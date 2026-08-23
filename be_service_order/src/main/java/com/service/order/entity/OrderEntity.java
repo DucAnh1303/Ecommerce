@@ -63,7 +63,7 @@ public class OrderEntity {
      * Trạng thái hiện tại của đơn hàng trong Saga
      */
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", length = 50, nullable = false)
     @Builder.Default
     private OrderStatus status = OrderStatus.PENDING;
 

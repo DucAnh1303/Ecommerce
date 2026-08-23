@@ -76,7 +76,7 @@ management:
 # ─── Logging ─────────────────────────────────────────────────────────────────
 logging:
   file:
-    path: ./var/log/order-service
+    path: /Users/aidenphung/Documents/ShopDA/Log_BE/Order_Logs
   level:
     root: INFO
     com.service.order: DEBUG

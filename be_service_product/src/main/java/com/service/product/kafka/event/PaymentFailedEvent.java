@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -12,11 +14,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentFailedEvent {
     private Long orderId;
     private Long userId;
     private String reason;
     private List<RollbackItem> itemsToRollback;
+    private LocalDateTime eventTime;
 
     @Data
     @NoArgsConstructor

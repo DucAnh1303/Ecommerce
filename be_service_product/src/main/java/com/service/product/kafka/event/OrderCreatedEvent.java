@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -13,6 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderCreatedEvent {
     private Long orderId;
     private Long userId;
@@ -20,6 +23,7 @@ public class OrderCreatedEvent {
     private List<OrderItemEvent> items;
     private Long totalAmount;
     private String shippingAddress;
+    private LocalDateTime eventTime;
 
     @Data
     @NoArgsConstructor

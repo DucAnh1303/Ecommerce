@@ -17,12 +17,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 )
 public interface OrderFeignClient {
 
-    /**
-     * Cập nhật trạng thái đơn hàng sang STOCK_RESERVED
-     */
+    /** Cập nhật trạng thái đơn hàng sang STOCK_RESERVED */
     @PostMapping("/api/v1/order/{orderId}/stock-reserved")
     Object markStockReserved(
             @RequestHeader(value = "Authorization", required = false) String authorization,
-            @PathVariable("orderId") Long orderId
+            @PathVariable Long orderId
     );
 }
