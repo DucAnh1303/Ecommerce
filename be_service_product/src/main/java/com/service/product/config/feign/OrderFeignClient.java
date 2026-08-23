@@ -21,6 +21,6 @@ public interface OrderFeignClient {
     @PostMapping("/api/v1/order/{orderId}/stock-reserved")
     Object markStockReserved(
             @RequestHeader(value = "Authorization", required = false) String authorization,
-            @PathVariable("orderId") Long orderId
+            @PathVariable Long orderId
     );
 }

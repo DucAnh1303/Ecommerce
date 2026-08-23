@@ -25,7 +25,7 @@ public class StockController {
     private final StockService stockService;
 
     /**
-     * API Giữ tồn kho & Cập nhật trừ số lượng kho trong bảng Product.
+     * API Xác nhận & Đảm bảo trạng thái/số lượng sản phẩm cho đơn hàng (Không trừ trực tiếp tồn kho).
      *
      * POST /api/v1/product/stock/reserve
      * POST /api/v1/product/stock/stock-reserved
@@ -33,7 +33,7 @@ public class StockController {
      */
     @PostMapping({"/reserve", "/stock-reserved"})
     public ResponseEntity<ReserveStockResponse> reserveStock(@Valid @RequestBody ReserveStockRequest request) {
-        log.info("[Product-Stock] Nhận yêu cầu giữ tồn kho và trừ stock cho orderId={}", request.getOrderId());
+        log.info("[Product-Stock] Nhận yêu cầu kiểm tra và xác nhận trạng thái sản phẩm cho orderId={}", request.getOrderId());
         ReserveStockResponse response = stockService.reserveStockApi(request);
         if (Boolean.TRUE.equals(response.getSuccess())) {
             return ResponseEntity.ok(response);

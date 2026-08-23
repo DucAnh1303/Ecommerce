@@ -49,7 +49,7 @@ springdoc:
 
 logging:
   file:
-    path: ./var/log/product-service
+    path: /Users/aidenphung/Documents/ShopDA/Log_BE/Product_Logs
 
 #eureka:
 #  client:
