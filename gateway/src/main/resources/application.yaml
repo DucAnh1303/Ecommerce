@@ -23,13 +23,3 @@ logging:
     org.springframework.cloud.gateway: INFO
     org.springframework.cloud.loadbalancer: DEBUG
     org.springframework.cloud.client.discovery: DEBUG
-
-## ─── Actuator ───────────────────────────────────────────────────────
-#management:
-#  endpoints:
-#    web:
-#      exposure:
-#        include: health, info
-#  endpoint:
-#    health:
-#      show-details: always

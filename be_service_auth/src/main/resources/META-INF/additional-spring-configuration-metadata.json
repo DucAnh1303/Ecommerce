@@ -1,9 +1,24 @@
 {
   "properties": [
     {
-      "name": "jwt.secret-key",
+      "name": "jwt.issuer",
       "type": "java.lang.String",
-      "description": "A description for 'jwt.secret-key'"
+      "description": "Issuer (iss) claim written into every JWT and required by verifiers."
+    },
+    {
+      "name": "jwt.access-exp",
+      "type": "java.lang.Long",
+      "description": "Access token lifetime in milliseconds."
+    },
+    {
+      "name": "jwt.refresh-exp",
+      "type": "java.lang.Long",
+      "description": "Refresh token lifetime in milliseconds."
+    },
+    {
+      "name": "jwt.rsa.private-key-location",
+      "type": "org.springframework.core.io.Resource",
+      "description": "Location of the PKCS#8 PEM RSA private key used to sign JWTs (RS256)."
     },
     {
       "name": "eureka.client.service-url.defaultZone",

@@ -130,31 +130,20 @@ public class OrderService {
         }
     }
 
-    /**
-     * Xác nhận giữ tồn kho thành công cho đơn hàng qua API trực tiếp (Cập nhật sang STOCK_RESERVED).
-     */
-    @Transactional
-    public OrderResponse markStockReserved(Long orderId) {
-        OrderEntity order = findOrderOrThrow(orderId);
-        if (order.getStatus() == OrderStatus.PENDING) {
-            order.setStatus(OrderStatus.STOCK_RESERVED);
-            OrderEntity saved = orderRepository.save(order);
-            log.info("[Order] orderId={} → STOCK_RESERVED thành công qua API.", orderId);
-            return OrderResponse.from(saved);
-        }
-        return OrderResponse.from(order);
-    }
-
     // ═══════════════════════════════════════════════════════════════════════════
     // [STEP 2b] Stock thất bại (Hết hàng) → Đánh dấu Order STOCK_FAILED
     // ═══════════════════════════════════════════════════════════════════════════
     @Transactional
     public void handleStockFailed(StockFailedEvent event) {
         OrderEntity order = findOrderOrThrow(event.getOrderId());
-        order.setStatus(OrderStatus.STOCK_FAILED);
-        order.setFailReason(event.getReason());
-        orderRepository.save(order);
-        log.warn("[Saga][STEP-2b] orderId={} → STOCK_FAILED. Lý do: {}", order.getId(), event.getReason());
+        if (order.getStatus() == OrderStatus.PENDING) {
+            order.setStatus(OrderStatus.STOCK_FAILED);
+            order.setFailReason(event.getReason());
+            orderRepository.save(order);
+            log.warn("[Saga][STEP-2b] orderId={} → STOCK_FAILED. Lý do: {}", order.getId(), event.getReason());
+        } else {
+            log.info("[Saga][STEP-2b] orderId={} đang ở trạng thái {}, bỏ qua stock.failed.", order.getId(), order.getStatus());
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════════

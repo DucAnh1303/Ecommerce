@@ -17,6 +17,7 @@ import web.com.auth.repository.UserRepository;
 import web.com.auth.request.AuthRequest;
 import web.com.auth.response.AuthResponse;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -45,9 +46,16 @@ public class AuthService {
         String access = jwtService.generateAccessToken(getUser);
         String refresh = jwtService.generateRefreshToken(getUser);
 
+        // 1. Thu hồi các refresh token cũ của user trong DB
+        refreshService.revokeAllByUsername(getUser.getUserName());
+
+        // 2. Thu hồi access token cũ của user (đưa vào Redis Blacklist) và lưu token mới
+        String newJti = jwtService.parse(access).getId();
+        tokenBlacklistService.registerActiveToken(getUser.getUserName(), newJti, Duration.ofMillis(jwtService.getAccessExp()));
+
         Date expiry = jwtService.parse(refresh).getExpiration();
         refreshService.save(refresh, getUser.getUserName(), expiry);
-        log.info("Login account: {} Success ", getUser.getUserName());
+        log.info("Login account: {} Success – old active session revoked", getUser.getUserName());
         return new AuthResponse(access, refresh);
     }
 
@@ -62,7 +70,12 @@ public class AuthService {
         String newAccess = jwtService.generateAccessToken(getUser);
         String newRefresh = jwtService.generateRefreshToken(getUser);
 
+        // Thu hồi refresh token cũ
         refreshService.revoke(refreshToken);
+
+        // Đăng ký active token mới (đưa token cũ vào blacklist)
+        String newJti = jwtService.parse(newAccess).getId();
+        tokenBlacklistService.registerActiveToken(username, newJti, Duration.ofMillis(jwtService.getAccessExp()));
 
         Date expiry = jwtService.parse(newRefresh).getExpiration();
         refreshService.save(newRefresh, username, expiry);
@@ -72,8 +85,12 @@ public class AuthService {
 
     @Transactional
     public void logout(String accessToken, String refreshToken) {
-        tokenBlacklistService.blacklist(accessToken);
-        refreshService.revoke(refreshToken);
+        if (accessToken != null && !accessToken.isBlank()) {
+            tokenBlacklistService.blacklist(accessToken);
+        }
+        if (refreshToken != null && !refreshToken.isBlank()) {
+            refreshService.revoke(refreshToken);
+        }
         log.info("Logout success — access token blacklisted, refresh token revoked");
     }
 

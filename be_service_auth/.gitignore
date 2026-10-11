@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### RSA keys (JWT RS256) – không commit private key ###
+src/main/resources/keys/private_key.pem

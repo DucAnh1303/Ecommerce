@@ -39,20 +39,25 @@ public class StockService {
 
     private final ProductRepository productRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final com.service.product.config.feign.OrderFeignClient orderFeignClient;
 
     public static final String TOPIC_STOCK_RESERVED = "order.stock.reserved";
     public static final String TOPIC_STOCK_FAILED = "order.stock.failed";
 
     /**
-     * [SAGA KAFKA] Kiểm tra và đảm bảo trạng thái/số lượng sản phẩm cho toàn bộ items trong đơn hàng.
-     * Nếu bất kỳ sản phẩm nào thiếu hàng → Publish stock.failed.
-     * Nếu hợp lệ → Publish stock.reserved. (Không trừ trực tiếp tồn kho ở bước này).
+     * [SAGA KAFKA] Kiểm tra tồn kho, trừ số lượng tồn kho trong DB và đẩy kết quả về Order Service qua Kafka.
+     * - Nếu thiếu hàng → Publish stock.failed (STOCK_FAILED).
+     * - Nếu đủ hàng → Trừ tồn kho trong DB + Publish stock.reserved (STOCK_RESERVED).
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public void reserveStock(OrderCreatedEvent event) {
-        log.info("[Stock-Kafka] Bắt đầu kiểm tra trạng thái và số lượng sản phẩm cho orderId={}", event.getOrderId());
+        log.info("[Stock-Kafka] Bắt đầu kiểm tra và cập nhật tồn kho cho orderId={}", event.getOrderId());
 
+        if (event.getItems() == null || event.getItems().isEmpty()) {
+            publishStockFailed(event.getOrderId(), event.getUserId(), "Đơn hàng không có sản phẩm");
+            return;
+        }
+
+        // Bước 1: Kiểm tra tính hợp lệ và số lượng tồn kho của toàn bộ sản phẩm
         for (OrderCreatedEvent.OrderItemEvent item : event.getItems()) {
             ProductEntity product = productRepository.findById(item.getProductId()).orElse(null);
             if (product == null) {
@@ -70,8 +75,20 @@ public class StockService {
                     product.getId(), item.getQuantity(), product.getProStock());
         }
 
-        log.info("[Stock-Kafka] Đã kiểm tra trạng thái và số lượng sản phẩm hợp lệ cho orderId={}", event.getOrderId());
+        // Bước 2: Khi tất cả đều đủ hàng → Cập nhật trừ tồn kho trong DB
+        for (OrderCreatedEvent.OrderItemEvent item : event.getItems()) {
+            ProductEntity product = productRepository.findById(item.getProductId()).orElseThrow();
+            int oldStock = product.getProStock();
+            int newStock = oldStock - item.getQuantity();
+            product.setProStock(newStock);
+            productRepository.save(product);
+            log.info("[Stock-Kafka] Đã trừ {} unit cho productId={} (Tồn cũ: {}, Tồn mới: {})",
+                    item.getQuantity(), product.getId(), oldStock, newStock);
+        }
 
+        log.info("[Stock-Kafka] Đã cập nhật trừ tồn kho thành công cho orderId={}", event.getOrderId());
+
+        // Bước 3: Đẩy kết quả về cho Order Service hoàn toàn bất đồng bộ qua Kafka Pub/Sub
         StockReservedEvent reservedEvent = StockReservedEvent.builder()
                 .orderId(event.getOrderId())
                 .userId(event.getUserId())
@@ -118,13 +135,24 @@ public class StockService {
     // [REST API] Hỗ trợ gọi kiểm tra / giữ tồn kho trực tiếp nếu cần
     // ═══════════════════════════════════════════════════════════════════════════
     /**
-     * [REST API] Xác nhận trạng thái và số lượng tồn kho sản phẩm cho đơn hàng (Không trừ trực tiếp tồn kho).
+     * [REST API] Kiểm tra và cập nhật trừ tồn kho sản phẩm cho đơn hàng qua API.
+     * Đẩy kết quả về cho Order Service qua cả Feign HTTP và Kafka Pub/Sub.
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public ReserveStockResponse reserveStockApi(ReserveStockRequest request) {
-        log.info("[Stock-API] Nhận yêu cầu xác nhận trạng thái sản phẩm cho orderId={}", request.getOrderId());
-        List<ReserveStockResponse.ReservedItemInfo> reservedInfoList = new ArrayList<>();
+        log.info("[Stock-API] Nhận yêu cầu kiểm tra và giữ tồn kho cho orderId={}", request.getOrderId());
 
+        if (request.getItems() == null || request.getItems().isEmpty()) {
+            String error = "Đơn hàng không có sản phẩm";
+            publishStockFailed(request.getOrderId(), request.getUserId(), error);
+            return ReserveStockResponse.builder()
+                    .orderId(request.getOrderId())
+                    .success(false)
+                    .message(error)
+                    .build();
+        }
+
+        // Bước 1: Kiểm tra tính hợp lệ và tồn kho của toàn bộ sản phẩm trước
         for (ReserveStockRequest.StockItemDto item : request.getItems()) {
             ProductEntity product = productRepository.findById(item.getProductId()).orElse(null);
             if (product == null) {
@@ -147,26 +175,30 @@ public class StockService {
                         .message(error)
                         .build();
             }
+        }
+
+        // Bước 2: Khi tất cả đều đủ hàng → Cập nhật trừ tồn kho trong DB
+        List<ReserveStockResponse.ReservedItemInfo> reservedInfoList = new ArrayList<>();
+        for (ReserveStockRequest.StockItemDto item : request.getItems()) {
+            ProductEntity product = productRepository.findById(item.getProductId()).orElseThrow();
+            int oldStock = product.getProStock();
+            int newStock = oldStock - item.getQuantity();
+            product.setProStock(newStock);
+            productRepository.save(product);
 
             reservedInfoList.add(ReserveStockResponse.ReservedItemInfo.builder()
                     .productId(product.getId())
                     .productName(product.getProName())
                     .quantity(item.getQuantity())
-                    .remainingStock(product.getProStock())
+                    .remainingStock(newStock)
                     .build());
+            log.info("[Stock-API] Đã trừ {} unit cho productId={} (Tồn cũ: {}, Tồn mới: {})",
+                    item.getQuantity(), product.getId(), oldStock, newStock);
         }
 
-        log.info("[Stock-API] Đã xác nhận trạng thái sản phẩm và tồn kho hợp lệ cho orderId={}", request.getOrderId());
+        log.info("[Stock-API] Đã cập nhật trừ tồn kho thành công cho orderId={}", request.getOrderId());
 
-        // 1. Cập nhật trạng thái sang Order Service qua Feign HTTP
-        try {
-            orderFeignClient.markStockReserved(null, request.getOrderId());
-            log.info("[Stock-API] Đã đồng bộ trạng thái orderId={} sang STOCK_RESERVED qua Feign Client", request.getOrderId());
-        } catch (Exception e) {
-            log.warn("[Stock-API] Feign sync sang Order Service: {}. Tiếp tục publish Kafka event.", e.getMessage());
-        }
-
-        // 2. Publish event order.stock.reserved để toàn bộ hệ thống đồng bộ
+        // Bước 3: Đẩy trạng thái sang Order Service qua Kafka Pub/Sub
         StockReservedEvent reservedEvent = StockReservedEvent.builder()
                 .orderId(request.getOrderId())
                 .userId(request.getUserId())
@@ -184,7 +216,7 @@ public class StockService {
         return ReserveStockResponse.builder()
                 .orderId(request.getOrderId())
                 .success(true)
-                .message("Đã xác nhận trạng thái sản phẩm và số lượng tồn kho hợp lệ. Đơn hàng sẵn sàng để thanh toán.")
+                .message("Đã cập nhật trừ tồn kho thành công. Đơn hàng chuyển sang trạng thái STOCK_RESERVED, sẵn sàng thanh toán.")
                 .items(reservedInfoList)
                 .build();
     }
@@ -266,6 +298,8 @@ public class StockService {
     // ─── Helpers ──────────────────────────────────────────────────────────────
     private void publishStockFailed(Long orderId, Long userId, String reason) {
         log.warn("[Stock] Reserve FAILED cho orderId={}: {}", orderId, reason);
+
+        // Publish event qua Kafka Pub/Sub để Order Service đồng bộ trạng thái đơn hàng
         StockFailedEvent failedEvent = StockFailedEvent.builder()
                 .orderId(orderId)
                 .userId(userId)

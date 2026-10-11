@@ -30,10 +30,13 @@ spring:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
-        spring.json.use.type.headers: false
-        spring.json.value.default.type: "java.util.Map"
+  # ─── Redis (Blacklist token check) ──────────────────────────────────────────
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 500ms
 
 server:
   port: 8087
@@ -86,3 +89,13 @@ logging:
 app:
   auth-service:
     url: ${AUTH_SERVICE_URL:http://localhost:8089}
+
+# ─── JWT (RS256 – verify bằng public key lấy từ JWKS của AUTH-SERVICE) ────────
+jwt:
+  issuer: ${JWT_ISSUER:shopda-auth}
+  jwks-uri: ${JWT_JWKS_URI:${app.auth-service.url}/api/v1/auth/.well-known/jwks.json}
+  jwks-min-refresh-interval: 30s
+  clock-skew: 30s
+  blacklist:
+    enabled: ${JWT_BLACKLIST_ENABLED:true}
+    prefix: "blacklist:"

@@ -23,47 +23,74 @@ import java.util.Map;
 
 /**
  * Cấu hình Kafka cho Order Service.
- *
+ * <p>
  * Topics:
- *  - order.created        : Order Service → Product Service (reserve stock)
- *  - order.stock.reserved : Product Service → Order Service (stock OK)
- *  - order.stock.failed   : Product Service → Order Service (hết hàng)
- *  - order.payment.success: Order Service → Order Service (thanh toán OK)
- *  - order.payment.failed : Order Service → Product Service + Order Service (rollback)
- *  - order.completed      : Order Service → Notification (đơn hoàn tất)
- *  - order.dlq            : Dead Letter Queue (message fail 3 lần)
- *
+ * - order.created        : Order Service → Product Service (reserve stock)
+ * - order.stock.reserved : Product Service → Order Service (stock OK)
+ * - order.stock.failed   : Product Service → Order Service (hết hàng)
+ * - order.payment.success: Order Service → Order Service (thanh toán OK)
+ * - order.payment.failed : Order Service → Product Service + Order Service (rollback)
+ * - order.completed      : Order Service → Notification (đơn hoàn tất)
+ * - order.dlq            : Dead Letter Queue (message fail 3 lần)
+ * <p>
  * Consumer:
- *  - concurrency = 3: mỗi instance xử lý 3 partition song song
- *  - maxPollRecords = 50: batch xử lý 50 message/poll
- *  - FixedBackOff (3 lần retry, cách 2s): trước khi đẩy vào DLQ
+ * - concurrency = 3: mỗi instance xử lý 3 partition song song
+ * - maxPollRecords = 50: batch xử lý 50 message/poll
+ * - FixedBackOff (3 lần retry, cách 2s): trước khi đẩy vào DLQ
  */
 @Configuration
 public class KafkaConfig {
 
     // ─── Topic names ──────────────────────────────────────────────────────────
-    public static final String TOPIC_ORDER_CREATED          = "order.created";
-    public static final String TOPIC_STOCK_RESERVED         = "order.stock.reserved";
-    public static final String TOPIC_STOCK_FAILED           = "order.stock.failed";
-    public static final String TOPIC_PAYMENT_SUCCESS        = "order.payment.success";
-    public static final String TOPIC_PAYMENT_FAILED         = "order.payment.failed";
-    public static final String TOPIC_ORDER_COMPLETED        = "order.completed";
-    public static final String TOPIC_DLQ                    = "order.dlq";
+    public static final String TOPIC_ORDER_CREATED = "order.created";
+    public static final String TOPIC_STOCK_RESERVED = "order.stock.reserved";
+    public static final String TOPIC_STOCK_FAILED = "order.stock.failed";
+    public static final String TOPIC_PAYMENT_SUCCESS = "order.payment.success";
+    public static final String TOPIC_PAYMENT_FAILED = "order.payment.failed";
+    public static final String TOPIC_ORDER_COMPLETED = "order.completed";
+    public static final String TOPIC_DLQ = "order.dlq";
 
-    public static final String GROUP_ORDER_SERVICE          = "order-service-group";
+    public static final String GROUP_ORDER_SERVICE = "order-service-group";
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
     // ─── Topic Beans (auto-create với 3 partitions) ───────────────────────────
 
-    @Bean public NewTopic topicOrderCreated()      { return buildTopic(TOPIC_ORDER_CREATED); }
-    @Bean public NewTopic topicStockReserved()     { return buildTopic(TOPIC_STOCK_RESERVED); }
-    @Bean public NewTopic topicStockFailed()       { return buildTopic(TOPIC_STOCK_FAILED); }
-    @Bean public NewTopic topicPaymentSuccess()    { return buildTopic(TOPIC_PAYMENT_SUCCESS); }
-    @Bean public NewTopic topicPaymentFailed()     { return buildTopic(TOPIC_PAYMENT_FAILED); }
-    @Bean public NewTopic topicOrderCompleted()    { return buildTopic(TOPIC_ORDER_COMPLETED); }
-    @Bean public NewTopic topicDlq()               { return buildTopic(TOPIC_DLQ); }
+    @Bean
+    public NewTopic topicOrderCreated() {
+        return buildTopic(TOPIC_ORDER_CREATED);
+    }
+
+    @Bean
+    public NewTopic topicStockReserved() {
+        return buildTopic(TOPIC_STOCK_RESERVED);
+    }
+
+    @Bean
+    public NewTopic topicStockFailed() {
+        return buildTopic(TOPIC_STOCK_FAILED);
+    }
+
+    @Bean
+    public NewTopic topicPaymentSuccess() {
+        return buildTopic(TOPIC_PAYMENT_SUCCESS);
+    }
+
+    @Bean
+    public NewTopic topicPaymentFailed() {
+        return buildTopic(TOPIC_PAYMENT_FAILED);
+    }
+
+    @Bean
+    public NewTopic topicOrderCompleted() {
+        return buildTopic(TOPIC_ORDER_COMPLETED);
+    }
+
+    @Bean
+    public NewTopic topicDlq() {
+        return buildTopic(TOPIC_DLQ);
+    }
 
     private NewTopic buildTopic(String name) {
         return TopicBuilder.name(name)
