@@ -1,5 +1,6 @@
 package web.com.auth.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Date;
 public class RefreshTokenEntity {
 
     @Id
+    @Column(length = 2048)
     private String token;
 
     private String username;

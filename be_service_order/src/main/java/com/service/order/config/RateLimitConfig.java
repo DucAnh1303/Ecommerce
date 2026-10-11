@@ -10,12 +10,12 @@ import java.time.Duration;
 
 /**
  * Rate Limiter dùng Resilience4j (Token Bucket in-memory).
- *
+ * <p>
  * Cấu hình:
- *  - limitForPeriod = 100: tối đa 100 request/giây
- *  - limitRefreshPeriod = 1s: reset token mỗi giây
- *  - timeoutDuration = 0: nếu vượt limit → fail ngay (không chờ)
- *
+ * - limitForPeriod = 100: tối đa 100 request/giây
+ * - limitRefreshPeriod = 1s: reset token mỗi giây
+ * - timeoutDuration = 0: nếu vượt limit → fail ngay (không chờ)
+ * <p>
  * Khi scale nhiều instance của Order Service, mỗi instance có rate limiter riêng.
  * Tổng throughput = limitForPeriod × số instance.
  * Nếu cần rate limit tập trung, cần chuyển sang Redis Token Bucket.

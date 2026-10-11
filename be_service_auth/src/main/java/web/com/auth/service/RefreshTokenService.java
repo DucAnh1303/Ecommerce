@@ -33,9 +33,23 @@ public class RefreshTokenService {
     }
 
     public void revoke(String token) {
-        repo.findById(token).ifPresent(rt -> {
-            rt.setRevoked(true);
-            repo.save(rt);
-        });
+        if (token != null) {
+            repo.findById(token).ifPresent(rt -> {
+                rt.setRevoked(true);
+                repo.save(rt);
+            });
+        }
+    }
+
+    @Transactional
+    public void revokeAllByUsername(String username) {
+        if (username == null || username.isBlank()) {
+            return;
+        }
+        var tokens = repo.findAllByUsernameAndRevokedFalse(username);
+        if (!tokens.isEmpty()) {
+            tokens.forEach(rt -> rt.setRevoked(true));
+            repo.saveAll(tokens);
+        }
     }
 }

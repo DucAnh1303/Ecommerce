@@ -35,22 +35,26 @@ public class AuthController {
      * Logout: thu hồi cả access token (blacklist Redis) và refresh token (DB).
      *
      * @param authorizationHeader Header "Authorization: Bearer <accessToken>"
-     * @param request             Body chứa refreshToken
+     * @param request             Body chứa refreshToken (tuỳ chọn)
      */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
-            @RequestHeader("Authorization") String authorizationHeader,
-            @RequestBody RefreshTokenRequest request) {
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader,
+            @RequestBody(required = false) RefreshTokenRequest request) {
 
-        String accessToken = authorizationHeader.substring(7).trim();
-        authService.logout(accessToken, request.getRefreshToken());
+        String accessToken = (authorizationHeader != null && authorizationHeader.toLowerCase().startsWith("bearer "))
+                ? authorizationHeader.substring(7).trim()
+                : null;
+        String refreshToken = request != null ? request.getRefreshToken() : null;
+
+        authService.logout(accessToken, refreshToken);
         return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/validate")
     public ResponseEntity<UserDTO> validateToken(
-            @RequestHeader("Authorization") String authorizationHeader) {
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            @RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.toLowerCase().startsWith("bearer ")) {
             return ResponseEntity.status(401).build();
         }
         String token = authorizationHeader.substring(7).trim();

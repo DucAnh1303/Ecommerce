@@ -94,17 +94,6 @@ public class OrderController {
     }
 
     /**
-     * Xác nhận giữ tồn kho thành công cho đơn hàng (Cập nhật sang STOCK_RESERVED).
-     *
-     * POST /api/v1/order/{orderId}/stock-reserved
-     */
-    @PostMapping("/{orderId}/stock-reserved")
-    public ResponseEntity<OrderResponse> markStockReserved(@PathVariable Long orderId) {
-        log.info("[Order] Nhận yêu cầu xác nhận giữ kho cho orderId={}", orderId);
-        return ResponseEntity.ok(orderService.markStockReserved(orderId));
-    }
-
-    /**
      * Khách hàng thực hiện thanh toán đơn hàng (sau khi tồn kho đã được giữ:
      * STOCK_RESERVED).
      *
