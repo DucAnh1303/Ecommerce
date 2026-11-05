@@ -1,0 +1,78 @@
+spring:
+  application:
+    name: NOTICE-SERVICE
+
+  # ─── Kafka (consume Saga events để đẩy thông báo realtime) ───────────────────
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9094}
+    consumer:
+      group-id: notice-service-group
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # Đọc raw JSON string → tự parse (không phụ thuộc class event của service khác)
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      concurrency: 3
+
+  # ─── Redis (Blacklist token check) ──────────────────────────────────────────
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 500ms
+
+server:
+  port: ${NOTICE_PORT:8086}
+
+# ─── WebSocket / STOMP ────────────────────────────────────────────────────────
+notice:
+  websocket:
+    # Endpoint native WebSocket:  ws://host:8086/ws/notice
+    # Endpoint SockJS fallback:   http://host:8086/ws/notice/sockjs
+    endpoint: /ws/notice
+    allowed-origin-patterns:
+      - http://localhost:*
+      - http://127.0.0.1:*
+    # Heartbeat 2 chiều (ms): [server gửi → client, server mong nhận ← client]
+    # Client không gửi heartbeat quá ~3 chu kỳ → broker tự đóng session.
+    heartbeat-server-send: 10000
+    heartbeat-server-receive: 10000
+    message-size-limit: 65536        # 64KB / frame
+    send-buffer-size-limit: 524288   # 512KB buffer / session
+    send-time-limit: 20000           # 20s
+    time-to-first-message: 30000     # Phải gửi CONNECT trong 30s sau handshake
+    inbound-pool-size: 8
+    outbound-pool-size: 8
+
+# ─── JWT (RS256 – verify bằng public key lấy từ JWKS của AUTH-SERVICE) ────────
+app:
+  auth-service:
+    url: ${AUTH_SERVICE_URL:http://localhost:8089}
+
+jwt:
+  issuer: ${JWT_ISSUER:shopda-auth}
+  service: ${JWT_SERVICE:NOTICE}
+  jwks-uri: ${JWT_JWKS_URI:${app.auth-service.url}/api/v1/auth/.well-known/jwks.json}
+  jwks-min-refresh-interval: 30s
+  clock-skew: 30s
+  blacklist:
+    enabled: ${JWT_BLACKLIST_ENABLED:true}
+    prefix: "blacklist:"
+
+# ─── Actuator ────────────────────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+
+# ─── Logging ─────────────────────────────────────────────────────────────────
+logging:
+  file:
+    path: /Users/aidenphung/Documents/ShopDA/Log_BE/Notice_Logs
+  level:
+    root: INFO
+    com.service.notice: DEBUG
+    org.springframework.web.socket: INFO
+    org.springframework.messaging: INFO

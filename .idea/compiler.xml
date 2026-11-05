@@ -7,7 +7,8 @@
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.46/a5cfe99fdf320e84955ef653f2ce1bf789d11385/lombok-1.18.46.jar" />
         </processorPath>
-        <module name="gateway.main" />
+        <module name="service_notice.test" />
+        <module name="service_notice.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -45,6 +46,9 @@
       <module name="service-product" options="-parameters" />
       <module name="service-product.main" options="-parameters" />
       <module name="service-product.test" options="-parameters" />
+      <module name="service_notice" options="-parameters" />
+      <module name="service_notice.main" options="-parameters" />
+      <module name="service_notice.test" options="-parameters" />
       <module name="service_order" options="-parameters" />
       <module name="service_order.main" options="-parameters" />
       <module name="service_order.test" options="-parameters" />

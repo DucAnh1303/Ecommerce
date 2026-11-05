@@ -11,19 +11,27 @@ import web.com.auth.dto.UserDTO;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 /**
  * Ký và parse JWT bằng RS256 (RSA private key ký – public key verify).
  *
- * <p>Cấu trúc token:</p>
+ * <p>
+ * Cấu trúc token:</p>
  * <pre>
- * header : { alg: RS256, kid: &lt;thumbprint&gt; }
- * payload: { iss, sub=username, uid=userId, roles=[...], type=access|refresh, jti, iat, exp }
- * </pre>
- * Các service khác (Gateway/Order/Product) chỉ cần public key (qua JWKS) để verify,
- * nhờ có {@code uid} + {@code roles} trong token nên không cần gọi lại AUTH-SERVICE.
+ * Access Token :
+ *   header : { alg: RS256, kid: &lt;thumbprint&gt; }
+ *   payload: { iss, sub=username, aud=[...], uid=userId, roles=[...], type="access", jti, iat, exp }
+ *
+ * Refresh Token :
+ *   header : { alg: RS256, kid: &lt;thumbprint&gt; }
+ *   payload: { iss, sub=username, type="refresh", jti, iat, exp }
+ * </pre> Các service khác (Gateway/Order/Product) chỉ nhận Access Token và
+ * verify bằng public key, nhờ có {@code uid} + {@code roles} trong Access Token
+ * nên không cần gọi lại AUTH-SERVICE. Refresh Token chỉ dùng nội bộ tại
+ * AUTH-SERVICE để cấp lại Access Token mới.
  */
 @Component
 @Getter
@@ -42,6 +50,13 @@ public class JwtAuthentication {
     @Value("${jwt.issuer}")
     private String issuer;
 
+    /**
+     * Danh sách service được phép dùng token (claim {@code aud}), vd: ORDER,
+     * PRODUCT.
+     */
+    @Value("${jwt.audiences}")
+    private List<String> audiences;
+
     @Value("${jwt.accessExp}")
     private long accessExp;
 
@@ -49,27 +64,35 @@ public class JwtAuthentication {
     private long refreshExp;
 
     public String generateAccessToken(UserDTO userDTO) {
-        return buildToken(userDTO, this.accessExp, ACCESS_TOKEN);
+        long now = System.currentTimeMillis();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(AUTH_TYPE, ACCESS_TOKEN);
+        claims.put(AUTH_ROLES, userDTO.getRoles());
+        claims.put(AUTH_USER_ID, userDTO.getUserId());
+
+        return Jwts.builder()
+                .header().keyId(rsaKeyProvider.getKeyId()).and()
+                .id(UUID.randomUUID().toString())
+                .issuer(issuer)
+                .audience().add(audiences).and()
+                .subject(userDTO.getUserName())
+                .claims(claims)
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + accessExp))
+                .signWith(rsaKeyProvider.getPrivateKey(), Jwts.SIG.RS256)
+                .compact();
     }
 
     public String generateRefreshToken(UserDTO userDTO) {
-        return buildToken(userDTO, this.refreshExp, REFRESH_TOKEN);
-    }
-
-    private String buildToken(UserDTO userDTO, long exp, String type) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(AUTH_TYPE, type);
-        claims.put(AUTH_ROLES, userDTO.getRoles());
-        claims.put(AUTH_USER_ID, userDTO.getUserId());
         long now = System.currentTimeMillis();
         return Jwts.builder()
                 .header().keyId(rsaKeyProvider.getKeyId()).and()
                 .id(UUID.randomUUID().toString())
                 .issuer(issuer)
                 .subject(userDTO.getUserName())
-                .claims(claims)
+                .claim(AUTH_TYPE, REFRESH_TOKEN)
                 .issuedAt(new Date(now))
-                .expiration(new Date(now + exp))
+                .expiration(new Date(now + refreshExp))
                 .signWith(rsaKeyProvider.getPrivateKey(), Jwts.SIG.RS256)
                 .compact();
     }
@@ -85,6 +108,9 @@ public class JwtAuthentication {
 
     public boolean isRefreshToken(String token) {
         try {
+            if (token == null || token.trim().isEmpty()) {
+                return false;
+            }
             return REFRESH_TOKEN.equals(parse(token).get(AUTH_TYPE));
         } catch (Exception e) {
             return false;

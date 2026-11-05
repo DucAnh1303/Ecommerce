@@ -19,6 +19,9 @@ public class StaticLoadBalancerConfig {
 
                 // 3. Order routes (/api/v1/order/create, /api/v1/order/{id}, /api/v1/order/my-orders...)
                 .route("order-service", r -> r.path("/api/v1/order/**").uri("lb://ORDER-SERVICE"))
+
+                // 4. Notice WebSocket (ws://gateway:8080/ws/notice, SockJS: /ws/notice/sockjs/**)
+                .route("notice-service-ws", r -> r.path("/ws/notice", "/ws/notice/**").uri("lb://NOTICE-SERVICE"))
                 .build();
     }
 }

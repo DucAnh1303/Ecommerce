@@ -11,7 +11,7 @@ import com.service.order.event.PaymentFailedEvent;
 import com.service.order.event.PaymentSuccessEvent;
 import com.service.order.event.StockFailedEvent;
 import com.service.order.event.StockReservedEvent;
-import com.service.order.service.OrderService;
+import com.service.order.service.order.OrderService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -29,15 +29,18 @@ public class JwtTokenVerifier {
     private final JwksPublicKeyProvider keyProvider;
     private final ObjectMapper objectMapper;
     private final String issuer;
+    private final String serviceName;
     private final long clockSkewSeconds;
 
     public JwtTokenVerifier(JwksPublicKeyProvider keyProvider,
                             ObjectMapper objectMapper,
                             @Value("${jwt.issuer}") String issuer,
+                            @Value("${jwt.service}") String serviceName,
                             @Value("${jwt.clock-skew:30s}") Duration clockSkew) {
         this.keyProvider = keyProvider;
         this.objectMapper = objectMapper;
         this.issuer = issuer;
+        this.serviceName = serviceName;
         this.clockSkewSeconds = clockSkew.toSeconds();
     }
 
@@ -53,6 +56,7 @@ public class JwtTokenVerifier {
         Claims claims = Jwts.parser()
                 .verifyWith(key)
                 .requireIssuer(issuer)
+                .requireAudience(serviceName)
                 .clockSkewSeconds(clockSkewSeconds)
                 .build()
                 .parseSignedClaims(token)

@@ -1,4 +1,4 @@
-package com.service.order.service;
+package com.service.order.service.order;
 
 import java.time.LocalDateTime;
 import java.util.List;

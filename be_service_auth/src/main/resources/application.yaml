@@ -37,6 +37,8 @@ logging:
 
 jwt:
   issuer: ${JWT_ISSUER:shopda-auth}
+  # Mỗi service chỉ chấp nhận token có aud chứa tên service của mình
+  audiences: ${JWT_AUDIENCES:ORDER,PRODUCT,NOTICE}
   accessExp: 3600000
   refreshExp: 10800000
   rsa:

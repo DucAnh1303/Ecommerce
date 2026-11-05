@@ -13,6 +13,14 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/be_service_notice" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/be_service_notice" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/be_service_order" />
         <option name="modules">
           <set>

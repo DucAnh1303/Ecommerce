@@ -17,7 +17,7 @@ import com.service.order.dto.CreateOrderRequest;
 import com.service.order.dto.OrderResponse;
 import com.service.order.dto.PaymentConfirmRequest;
 import com.service.order.dto.PaymentRequest;
-import com.service.order.service.OrderService;
+import com.service.order.service.order.OrderService;
 
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import jakarta.validation.Valid;

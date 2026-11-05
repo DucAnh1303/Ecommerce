@@ -1,7 +1,9 @@
 package com.service.order.kafka;
 
 import com.service.order.config.KafkaConfig;
-import com.service.order.event.*;
+import com.service.order.event.OrderCreatedEvent;
+import com.service.order.event.PaymentFailedEvent;
+import com.service.order.event.PaymentSuccessEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

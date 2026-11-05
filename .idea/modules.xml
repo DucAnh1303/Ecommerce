@@ -8,7 +8,9 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/service-auth.test.iml" filepath="$PROJECT_DIR$/.idea/modules/service-auth.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/service-product.main.iml" filepath="$PROJECT_DIR$/.idea/modules/service-product.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/service-product.test.iml" filepath="$PROJECT_DIR$/.idea/modules/service-product.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/service_notice.main.iml" filepath="$PROJECT_DIR$/.idea/modules/service_notice.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/service_order.main.iml" filepath="$PROJECT_DIR$/.idea/modules/service_order.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/service_order.test.iml" filepath="$PROJECT_DIR$/.idea/modules/service_order.test.iml" />
     </modules>
   </component>
 </project>

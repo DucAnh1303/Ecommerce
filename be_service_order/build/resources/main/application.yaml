@@ -93,6 +93,7 @@ app:
 # ─── JWT (RS256 – verify bằng public key lấy từ JWKS của AUTH-SERVICE) ────────
 jwt:
   issuer: ${JWT_ISSUER:shopda-auth}
+  service: ${JWT_SERVICE:ORDER}
   jwks-uri: ${JWT_JWKS_URI:${app.auth-service.url}/api/v1/auth/.well-known/jwks.json}
   jwks-min-refresh-interval: 30s
   clock-skew: 30s
