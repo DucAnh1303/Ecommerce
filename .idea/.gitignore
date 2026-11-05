@@ -9,3 +9,11 @@
 /dataSources/
 /dataSources.local.xml
 /modules
+/dataSources.xml
+/db-forest-config.xml
+/gradle.xml
+/misc.xml
+/modules.xml
+/vcs.xml
+/workspace.xml
+/compiler.xml
